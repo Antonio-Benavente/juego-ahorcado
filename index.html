@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Juego del Ahorcado</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script type="module" src="./js/script.js"></script>
+
+</head>
+
+<body>
+    <!-- Pantalla de Inicio -->
+    <section class="inicio" id="pantallaInicio">
+        <div class="icono-juego">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox="0 0 24.000000 24.000000"
+                preserveAspectRatio="xMidYMid meet">
+
+                <g transform="translate(0.000000,24.000000) scale(0.100000,-0.100000)" fill="currentColor"
+                    stroke="none">
+                    <path
+                        d="M30 232 c17 -6 12 -109 -5 -116 -16 -6 -21 -46 -5 -46 5 0 7 6 4 13 -2 7 8 22 23 33 114 83 163 114 163 105 0 -5 -40 -37 -88 -71 -86 -59 -88 -61 -84 -96 3 -24 0 -39 -9 -45 -11 -7 -10 -9 4 -9 14 0 17 9 17 44 0 43 2 47 57 85 31 23 58 39 61 36 2 -2 -5 -22 -16 -44 -12 -22 -18 -49 -15 -63 4 -18 3 -20 -6 -8 -6 8 -11 10 -11 5 0 -6 7 -21 16 -33 17 -24 67 -31 80 -10 14 22 10 73 -8 108 -22 42 -23 64 -3 80 29 24 10 31 -88 33 -53 1 -93 1 -87 -1z m140 -16 c0 -2 -27 -22 -60 -45 l-60 -42 0 45 0 46 60 0 c33 0 60 -2 60 -4z m20 -106 c0 -10 4 -22 10 -25 6 -4 7 1 4 12 -4 13 -3 14 3 5 6 -7 9 -30 8 -50 -2 -35 -5 -37 -35 -37 -30 0 -33 2 -35 38 -1 21 2 40 6 43 5 3 6 -3 3 -13 -3 -10 1 -7 9 6 8 14 12 32 9 40 -3 9 -1 12 6 7 7 -4 12 -16 12 -26z" />
+                </g>
+            </svg>
+        </div>
+        <h1>El Juego del Ahorcado</h1>
+        <p class="subtitulo">Adivina la palabra oculta letra por letra antes de que se complete el dibujo. ¡Buena
+            suerte!</p>
+        <div class="botones-dificultad">
+            <button class="btn-dificultad activo" data-dificultad="facil">Nivel Fácil</button>
+            <button class="btn-dificultad" data-dificultad="intermedio">Nivel Intermedio</button>
+            <button class="btn-dificultad" data-dificultad="dificil">Nivel Difícil</button>
+        </div><!-- En la pantalla de inicio, reemplaza esta parte -->
+        <button class="btn-empezar" id="btnEmpezar">Empezar Juego</button>
+        <button class="btn-continuar" id="btnContinuar">Continuar Juego Guardado</button>
+    </section>
+
+    <!-- Pantalla de Juego -->
+    <section class="juego oculto" id="pantallaJuego">
+        <button class="btn-salir" id="btnSalir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-home">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+            </svg>
+        </button>
+        <div class="header-juego">
+            <h1>Juego del Ahorcado</h1>
+        </div>
+        <div class="contenedor-juego">
+            <div class="zona-dibujo">
+                <svg class="ahorcado-svg" viewBox="0 0 200 250">
+                    <!-- Base -->
+                    <line x1="10" y1="230" x2="150" y2="230" stroke="#8B4513" stroke-width="4" />
+                    <!-- Poste vertical -->
+                    <line x1="50" y1="230" x2="50" y2="20" stroke="#8B4513" stroke-width="4" />
+                    <!-- Poste horizontal -->
+                    <line x1="50" y1="20" x2="130" y2="20" stroke="#8B4513" stroke-width="4" />
+                    <!-- Cuerda -->
+                    <line x1="130" y1="20" x2="130" y2="50" stroke="#8B4513" stroke-width="2" />
+
+                    <!-- Partes del muñeco (ocultas inicialmente) -->
+                    <circle class="parte-cuerpo" cx="130" cy="70" r="20" stroke="#333" stroke-width="3" fill="none" />
+                    <line class="parte-cuerpo" x1="130" y1="90" x2="130" y2="150" stroke="#333" stroke-width="3" />
+                    <line class="parte-cuerpo" x1="130" y1="110" x2="100" y2="130" stroke="#333" stroke-width="3" />
+                    <line class="parte-cuerpo" x1="130" y1="110" x2="160" y2="130" stroke="#333" stroke-width="3" />
+                    <line class="parte-cuerpo" x1="130" y1="150" x2="100" y2="180" stroke="#333" stroke-width="3" />
+                    <line class="parte-cuerpo" x1="130" y1="150" x2="160" y2="180" stroke="#333" stroke-width="3" />
+                </svg>
+                <p class="contador-fallos">Fallos: <span id="contadorFallos">0</span>/6</p>
+            </div>
+
+            <div class="zona-juego">
+                <div class="seccion-palabra">
+                    <h2>Adivina la Palabra</h2>
+                    <div class="letras-palabra" id="letrasPalabra"></div>
+                </div>
+
+                <div class="teclado" id="teclado"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pantalla de Resultado -->
+    <section class="resultado oculto" id="pantallaResultado">
+        <div class="tarjeta-resultado" id="tarjetaGanaste">
+            <div class="icono-resultado">🏆</div>
+            <h2>¡Ganaste!</h2>
+            <p>La palabra era:</p>
+            <h3 class="palabra-revelada" id="palabraGanaste"></h3>
+            <button class="btn-accion" id="btnJugarOtroGanaste">Jugar de Nuevo</button>
+            <button class="btn-secundario" id="btnMenuGanaste">Volver al Menú Principal</button>
+        </div>
+
+        <div class="tarjeta-resultado oculto" id="tarjetaPerdiste">
+            <div class="icono-resultado perdiste">😢</div>
+            <h2>¡Perdiste!</h2>
+            <p>La palabra era:</p>
+            <h3 class="palabra-revelada" id="palabraPerdiste"></h3>
+            <button class="btn-accion" id="btnJugarOtroPerdiste">Jugar de Nuevo</button>
+            <button class="btn-secundario" id="btnMenuPerdiste">Volver al Menú Principal</button>
+        </div>
+    </section>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal-overlay oculto" id="modalSalir">
+        <div class="modal-contenido">
+            <h2>¿Deseas guardar el juego?</h2>
+            <p>Puedes guardar tu progreso y continuar más tarde</p>
+            <div class="modal-botones">
+                <button class="btn-modal btn-guardar" id="btnGuardarSalir">Guardar y Salir</button>
+                <button class="btn-modal btn-no-guardar" id="btnNoGuardarSalir">Salir sin Guardar</button>
+                <button class="btn-modal btn-cancelar" id="btnCancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© <span id="year"></span> El Ahorcado Game.</p>
+    </footer>
+
+</body>
+
+</html>
