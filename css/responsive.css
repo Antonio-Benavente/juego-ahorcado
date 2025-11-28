@@ -1,0 +1,74 @@
+/* ============================================
+   ESTILOS RESPONSIVOS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .inicio h1 {
+    font-size: 2rem;
+  }
+
+  .botones-dificultad {
+    flex-direction: column;
+  }
+
+  .btn-dificultad {
+    width: 100%;
+  }
+
+  .contenedor-juego {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 25px;
+  }
+
+  .header-juego {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .teclado {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .inicio {
+    padding: 20px 12px;
+  }
+
+  .inicio h1 {
+    font-size: 1.7rem;
+  }
+
+  .icono-juego {
+    width: 120px;
+    height: 120px;
+  }
+
+  .contenedor-juego {
+    padding: 20px 15px;
+  }
+
+  .letra-espacio {
+    width: 32px;
+    height: 45px;
+    font-size: 1.5rem;
+  }
+
+  .teclado {
+    gap: 5px;
+  }
+
+  .tecla {
+    padding: 8px 4px;
+    font-size: 0.85rem;
+  }
+
+  .tarjeta-resultado {
+    padding: 30px 20px;
+  }
+
+  .modal-contenido {
+    padding: 25px 20px;
+  }
+}

@@ -1,3 +1,7 @@
+/* ============================================
+   ESTILOS PRINCIPALES
+   ============================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -19,35 +23,12 @@ body {
   display: none !important;
 }
 
-/* Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Pantalla de Inicio */
 .inicio {
   width: 100%;
   max-width: 700px;
   padding: 40px 20px;
   text-align: center;
   margin: auto;
-  animation: fadeIn 0.4s ease-out;
 }
 
 .icono-juego {
@@ -72,7 +53,6 @@ body {
   font-size: 2.5rem;
   margin-bottom: 15px;
   font-weight: 700;
-  animation: fadeIn 0.6s ease-out;
   color: #ff2929;
 }
 
@@ -81,7 +61,6 @@ body {
   margin-bottom: 35px;
   font-size: 1rem;
   line-height: 1.5;
-  animation: fadeIn 0.8s ease-out;
 }
 
 .botones-dificultad {
@@ -90,7 +69,6 @@ body {
   margin-bottom: 30px;
   flex-wrap: wrap;
   justify-content: center;
-  animation: slideIn 0.6s ease-out;
 }
 
 .btn-dificultad {
@@ -116,52 +94,47 @@ body {
   border-color: #ff0000;
 }
 
-.btn-empezar {
-  width: 100%;
-  max-width: 400px;
-  padding: 16px;
-  background: #b30000;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  animation: fadeIn 1s ease-out;
-  margin-bottom: 15px;
-}
-
-.btn-empezar:hover {
-  background: #d60000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
-}
-
+.btn-empezar,
 .btn-continuar {
   width: 100%;
   max-width: 400px;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.8);
   color: white;
-  border: 2px solid rgba(255, 0, 0, 0.4);
   border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  animation: fadeIn 1s ease-out;
+  margin-bottom: 15px;
+}
+
+.btn-empezar {
+  background: #b30000;
+  border: none;
+}
+
+.btn-continuar {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 0, 0, 0.4);
   display: none;
+}
+
+.btn-empezar:hover,
+.btn-continuar:hover {
+  transform: translateY(-1px);
+}
+
+.btn-empezar:hover {
+  background: #d60000;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
 }
 
 .btn-continuar:hover {
   background: rgba(0, 0, 0, 0.95);
   border-color: #ff0000;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
 }
 
-/* Footer */
 footer {
   position: fixed;
   bottom: 0;
@@ -179,13 +152,11 @@ footer p {
   font-size: 0.85rem;
 }
 
-/* Pantalla de Juego */
 .juego {
   width: 100%;
   max-width: 1100px;
   padding: 20px;
   margin: auto;
-  animation: fadeIn 0.4s ease-out;
 }
 
 .header-juego {
@@ -197,14 +168,14 @@ footer p {
 .header-juego h1 {
   font-size: 2rem;
   color: #ff1c1c;
-  animation: slideIn 0.4s ease-out;
 }
 
 .btn-salir {
   background: rgba(255, 0, 0, 0.2);
   border: 2px solid rgba(255, 0, 0, 0.4);
   color: #ff4444;
-  width: 45px;
+  padding: 10px;
+  gap: 5px;
   height: 45px;
   border-radius: 12px;
   cursor: pointer;
@@ -266,17 +237,18 @@ footer p {
   font-size: 1.3rem;
 }
 
-/* Zona de Juego */
 .zona-juego {
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
+
 .seccion-palabra {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .seccion-palabra h2 {
   font-size: 1.3rem;
   margin-bottom: 20px;
@@ -301,7 +273,6 @@ footer p {
   font-size: 2rem;
   font-weight: bold;
   text-transform: uppercase;
-  animation: fadeIn 0.3s ease-out backwards;
   color: white;
 }
 
@@ -347,13 +318,11 @@ footer p {
   cursor: not-allowed;
 }
 
-/* Pantalla de Resultado */
 .resultado {
   width: 100%;
   max-width: 600px;
   padding: 20px;
   margin: auto;
-  animation: fadeIn 0.4s ease-out;
 }
 
 .tarjeta-resultado {
@@ -362,7 +331,6 @@ footer p {
   border-radius: 24px;
   padding: 50px 40px;
   text-align: center;
-  animation: fadeIn 0.6s ease-out;
 }
 
 .icono-resultado {
@@ -389,17 +357,21 @@ footer p {
   letter-spacing: 2px;
 }
 
-.btn-accion {
+.btn-accion,
+.btn-secundario {
   width: 100%;
   padding: 16px;
-  background: #b30000;
-  color: white;
-  border: none;
   border-radius: 12px;
-  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.btn-accion {
+  background: #b30000;
+  color: white;
+  border: none;
+  font-size: 1.1rem;
   margin-bottom: 15px;
 }
 
@@ -409,16 +381,10 @@ footer p {
 }
 
 .btn-secundario {
-  width: 100%;
-  padding: 16px;
   background: transparent;
   color: #999;
   border: 2px solid rgba(80, 0, 0, 0.6);
-  border-radius: 12px;
   font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .btn-secundario:hover {
@@ -426,37 +392,6 @@ footer p {
   color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .contenedor-juego {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding: 25px;
-  }
-
-  .inicio h1 {
-    font-size: 2rem;
-  }
-
-  .botones-dificultad {
-    flex-direction: column;
-  }
-
-  .btn-dificultad {
-    width: 100%;
-  }
-
-  .teclado {
-    grid-template-columns: repeat(7, 1fr);
-  }
-
-  .header-juego {
-    flex-direction: column;
-    gap: 15px;
-  }
-}
-
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -469,7 +404,6 @@ footer p {
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s ease-out;
 }
 
 .modal-contenido {
@@ -480,7 +414,6 @@ footer p {
   max-width: 500px;
   width: 90%;
   text-align: center;
-  animation: slideIn 0.3s ease-out;
 }
 
 .modal-contenido h2 {

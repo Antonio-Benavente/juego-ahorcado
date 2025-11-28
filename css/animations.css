@@ -1,0 +1,182 @@
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.inicio {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.icono-juego {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.inicio h1 {
+  animation: slideInFromTop 0.6s ease-out;
+}
+
+.subtitulo {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.botones-dificultad {
+  animation: slideIn 0.6s ease-out;
+}
+
+.btn-empezar {
+  animation: fadeIn 1s ease-out;
+}
+
+.btn-continuar {
+  animation: fadeIn 1s ease-out;
+}
+
+.juego {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.header-juego h1 {
+  animation: slideIn 0.4s ease-out;
+}
+
+.contenedor-juego {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.letra-espacio {
+  animation: fadeIn 0.3s ease-out backwards;
+}
+
+.letra-espacio:nth-child(1) { animation-delay: 0.05s; }
+.letra-espacio:nth-child(2) { animation-delay: 0.1s; }
+.letra-espacio:nth-child(3) { animation-delay: 0.15s; }
+.letra-espacio:nth-child(4) { animation-delay: 0.2s; }
+.letra-espacio:nth-child(5) { animation-delay: 0.25s; }
+.letra-espacio:nth-child(6) { animation-delay: 0.3s; }
+.letra-espacio:nth-child(7) { animation-delay: 0.35s; }
+.letra-espacio:nth-child(8) { animation-delay: 0.4s; }
+.letra-espacio:nth-child(9) { animation-delay: 0.45s; }
+.letra-espacio:nth-child(10) { animation-delay: 0.5s; }
+
+.resultado {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.tarjeta-resultado {
+  animation: scaleIn 0.6s ease-out;
+}
+
+.icono-resultado {
+  animation: bounce 0.8s ease-out;
+}
+
+.palabra-revelada {
+  animation: pulse 1s ease-out;
+}
+
+.modal-overlay {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-contenido {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+.btn-empezar:hover,
+.btn-accion:hover {
+  animation: pulse 0.3s ease-out;
+}
+
+.tecla.incorrecta {
+  animation: shake 0.3s ease-out;
+}
+
+.tecla.correcta {
+  animation: bounce 0.4s ease-out;
+}
+
+.parte-cuerpo.visible {
+  animation: fadeIn 0.5s ease-out;
+}
