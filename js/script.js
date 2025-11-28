@@ -1,317 +1,346 @@
-// Variables del juego
-let palabras = {};
-let dificultadSeleccionada = 'facil';
-let palabraActual = '';
-let palabraActualId = ''; 
-let letrasAdivinadas = [];
-let fallos = 0;
-const maxFallos = 6;
-const STORAGE_KEY = 'ahorcado_juego_guardado';
+// ============================================
+// ESTADO DEL JUEGO
+// ============================================
+const gameState = {
+  palabras: {},
+  dificultad: 'facil',
+  palabraActual: '',
+  palabraActualId: '',
+  letrasAdivinadas: [],
+  fallos: 0,
+  maxFallos: 6,
+  storageKey: 'ahorcado_juego_guardado'
+};
 
-// Elementos del DOM
-const pantallaInicio = document.getElementById('pantallaInicio');
-const pantallaJuego = document.getElementById('pantallaJuego');
-const pantallaResultado = document.getElementById('pantallaResultado');
-const btnEmpezar = document.getElementById('btnEmpezar');
-const btnContinuar = document.getElementById('btnContinuar');
-const btnSalir = document.getElementById('btnSalir');
-const letrasPalabra = document.getElementById('letrasPalabra');
-const teclado = document.getElementById('teclado');
-const contadorFallos = document.getElementById('contadorFallos');
-const tarjetaGanaste = document.getElementById('tarjetaGanaste');
-const tarjetaPerdiste = document.getElementById('tarjetaPerdiste');
-const modalSalir = document.getElementById('modalSalir');
-const btnGuardarSalir = document.getElementById('btnGuardarSalir');
-const btnNoGuardarSalir = document.getElementById('btnNoGuardarSalir');
-const btnCancelar = document.getElementById('btnCancelar');
+// ============================================
+// ELEMENTOS DEL DOM
+// ============================================
+const DOM = {
+  pantallaInicio: document.getElementById('pantallaInicio'),
+  pantallaJuego: document.getElementById('pantallaJuego'),
+  pantallaResultado: document.getElementById('pantallaResultado'),
+  letrasPalabra: document.getElementById('letrasPalabra'),
+  teclado: document.getElementById('teclado'),
+  contadorFallos: document.getElementById('contadorFallos'),
+  tarjetaGanaste: document.getElementById('tarjetaGanaste'),
+  tarjetaPerdiste: document.getElementById('tarjetaPerdiste'),
+  modalSalir: document.getElementById('modalSalir'),
+  palabraGanaste: document.getElementById('palabraGanaste'),
+  palabraPerdiste: document.getElementById('palabraPerdiste')
+};
 
-// Establecer el año actual
-document.getElementById("year").textContent = new Date().getFullYear();
+// ============================================
+// UTILIDADES
+// ============================================
+const utils = {
+  toggleScreen(hide, show) {
+    hide.forEach(el => el?.classList.add('oculto'));
+    show.forEach(el => el?.classList.remove('oculto'));
+  },
 
-// Cargar palabras desde JSON
-async function cargarPalabras() {
-    try {
-        const response = await fetch('./palabras.json');
-        palabras = await response.json();
-        verificarJuegoGuardado();
-    } catch (error) {
-        console.error('Error al cargar palabras:', error);
-        // Palabras de respaldo si falla la carga
-        palabras = {
-            facil: ['GATOS', 'PERRO', 'ROBOT', 'DULCE', 'LIBRO'],
-            intermedio: ['JAVASCRIPT', 'MONTANA', 'GUITARRA', 'VENTANA'],
-            dificil: ['PROGRAMADOR', 'TECNOLOGIA', 'DINOSAURIO']
-        };
-        verificarJuegoGuardado();
-    }
-}
+  resetGame() {
+    gameState.fallos = 0;
+    gameState.letrasAdivinadas = [];
+    this.resetDibujo();
+  },
 
-// Verificar si hay un juego guardado
-function verificarJuegoGuardado() {
-    const juegoGuardado = localStorage.getItem(STORAGE_KEY);
-    if (juegoGuardado) {
-        btnContinuar.style.display = 'initial';
-    } else {
-        btnContinuar.style.display = 'none';
-    }
-}
+  resetDibujo() {
+    document.querySelectorAll('.parte-cuerpo')
+      .forEach(p => p.classList.remove('visible'));
+  },
 
-// Guardar el estado del juego
-function guardarJuego() {
-    const estadoJuego = {
-        dificultad: dificultadSeleccionada,
-        palabraId: palabraActualId, // ⭐ Guardamos el ID, no la palabra
-        letrasAdivinadas: letrasAdivinadas,
-        fallos: fallos
+  mostrarParteCuerpo(n) {
+    const partes = document.querySelectorAll('.parte-cuerpo');
+    if (n > 0 && n <= partes.length) partes[n - 1].classList.add('visible');
+  },
+
+  actualizarContador() {
+    DOM.contadorFallos.textContent = gameState.fallos;
+  }
+};
+
+// ============================================
+// STORAGE
+// ============================================
+const storage = {
+  guardar() {
+    const estado = {
+      dificultad: gameState.dificultad,
+      palabraId: gameState.palabraActualId,
+      letrasAdivinadas: gameState.letrasAdivinadas,
+      fallos: gameState.fallos
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estadoJuego));
-}
+    localStorage.setItem(gameState.storageKey, JSON.stringify(estado));
+  },
 
-// Cargar juego guardado
-function cargarJuegoGuardado() {
-    const juegoGuardado = localStorage.getItem(STORAGE_KEY);
-    if (juegoGuardado) {
-        const estado = JSON.parse(juegoGuardado);
-        dificultadSeleccionada = estado.dificultad;
-        palabraActualId = estado.palabraId;
-        
-        // ⭐ Buscar la palabra usando el ID
-        const palabraObj = palabras[dificultadSeleccionada].find(p => p.id === palabraActualId);
-        palabraActual = palabraObj ? palabraObj.palabra : '';
-        
-        letrasAdivinadas = estado.letrasAdivinadas;
-        fallos = estado.fallos;
-        
-        // Mostrar pantalla de juego
-        pantallaInicio.classList.add('oculto');
-        pantallaJuego.classList.remove('oculto');
-        
-        // Recrear el estado del juego
-        crearEspaciosLetras();
-        
-        // Mostrar las letras correctas que ya fueron adivinadas
-        letrasAdivinadas.forEach(letra => {
-            if (palabraActual.includes(letra)) {
-                mostrarLetrasCorrectas(letra);
-            }
-        });
-        
-        // Crear teclado
-        crearTeclado();
-        
-        // ⭐ USAR setTimeout para asegurar que el DOM esté listo
-        setTimeout(() => {
-            // Restaurar estado de las teclas DESPUÉS de que el teclado se haya renderizado
-            letrasAdivinadas.forEach(letra => {
-                // ⭐ Buscar específicamente en los BOTONES del teclado, no en los espacios de letras
-                const tecla = document.querySelector(`button.tecla[data-letra="${letra}"]`);
-                if (tecla) {
-                    tecla.classList.add('deshabilitada');
-                    if (palabraActual.includes(letra)) {
-                        tecla.classList.add('correcta');
-                    } else {
-                        tecla.classList.add('incorrecta');
-                    }
-                }
-            });
-        }, 50); // Pequeño delay para asegurar que el DOM esté actualizado
-        
-        // Restaurar dibujo
-        resetearDibujo();
-        for (let i = 1; i <= fallos; i++) {
-            mostrarParteCuerpo(i);
-        }
-        
-        actualizarContador();
+  cargar() {
+    const data = localStorage.getItem(gameState.storageKey);
+    return data ? JSON.parse(data) : null;
+  },
+
+  limpiar() {
+    localStorage.removeItem(gameState.storageKey);
+    this.actualizarUI();
+  },
+
+  existe() {
+    return localStorage.getItem(gameState.storageKey) !== null;
+  },
+
+  // 🔥 mejora: evita error si btn no existe
+  actualizarUI() {
+    const btnContinuar = document.getElementById('btnContinuar');
+    if (!btnContinuar) return;
+    btnContinuar.style.display = this.existe() ? 'initial' : 'none';
+  }
+};
+
+// ============================================
+// PALABRAS
+// ============================================
+const palabrasManager = {
+  async cargar() {
+    try {
+      const r = await fetch('./js/palabras.json');
+      gameState.palabras = await r.json();
+    } catch (e) {
+      console.error('Error al cargar palabras:', e);
+
+      // 🔥 palabras fallback seguras
+      gameState.palabras = {
+        facil: [
+          { id: 'f001', palabra: 'GATOS' },
+          { id: 'f002', palabra: 'PERRO' },
+          { id: 'f003', palabra: 'ROBOT' }
+        ],
+        intermedio: [
+          { id: 'i001', palabra: 'JAVASCRIPT' },
+          { id: 'i002', palabra: 'MONTANA' }
+        ],
+        dificil: [
+          { id: 'd001', palabra: 'PROGRAMADOR' },
+          { id: 'd002', palabra: 'TECNOLOGIA' }
+        ]
+      };
     }
-}
 
-// Limpiar juego guardado
-function limpiarJuegoGuardado() {
-    localStorage.removeItem(STORAGE_KEY);
-    verificarJuegoGuardado();
-}
+    storage.actualizarUI();
+  },
 
-// Botones de dificultad
-const botonesDificultad = document.querySelectorAll('.btn-dificultad');
-botonesDificultad.forEach(btn => {
-    btn.addEventListener('click', () => {
-        botonesDificultad.forEach(b => b.classList.remove('activo'));
-        btn.classList.add('activo');
-        dificultadSeleccionada = btn.dataset.dificultad;
+  // 🔥 evita errores si json o dificultad está vacío
+  seleccionarAleatoria() {
+    const arr = gameState.palabras[gameState.dificultad] ?? [];
+    if (arr.length === 0) return { palabra: 'VACIO', id: 'null' };
+    return arr[Math.floor(Math.random() * arr.length)];
+  },
+
+  buscarPorId(id) {
+    return gameState.palabras[gameState.dificultad]?.find(p => p.id === id);
+  }
+};
+
+// ============================================
+// JUEGO
+// ============================================
+const game = {
+  iniciar() {
+    storage.limpiar();
+    utils.resetGame();
+
+    const palabra = palabrasManager.seleccionarAleatoria();
+    gameState.palabraActual = palabra.palabra;
+    gameState.palabraActualId = palabra.id;
+
+    utils.toggleScreen(
+      [DOM.pantallaInicio, DOM.pantallaResultado],
+      [DOM.pantallaJuego]
+    );
+
+    this.crearEspacios();
+    this.crearTeclado();
+    utils.actualizarContador();
+  },
+
+  continuar() {
+    const estado = storage.cargar();
+    if (!estado) return;
+
+    gameState.dificultad = estado.dificultad;
+    gameState.palabraActualId = estado.palabraId;
+    gameState.letrasAdivinadas = estado.letrasAdivinadas;
+    gameState.fallos = estado.fallos;
+
+    const palabraObj = palabrasManager.buscarPorId(estado.palabraId);
+    gameState.palabraActual = palabraObj?.palabra || '';
+
+    utils.toggleScreen([DOM.pantallaInicio], [DOM.pantallaJuego]);
+
+    this.crearEspacios();
+    this.mostrarProgreso();
+    this.crearTeclado();
+    this.restaurarTeclado();
+    this.restaurarDibujo();
+    utils.actualizarContador();
+  },
+
+  crearEspacios() {
+    DOM.letrasPalabra.innerHTML = '';
+    gameState.palabraActual.split('').forEach(l => {
+      const e = document.createElement('div');
+      e.className = 'letra-espacio';
+      e.dataset.letra = l;
+      DOM.letrasPalabra.appendChild(e);
     });
-});
+  },
 
-// Event Listeners
-btnEmpezar.addEventListener('click', iniciarJuego);
-btnContinuar.addEventListener('click', cargarJuegoGuardado);
-btnSalir.addEventListener('click', () => modalSalir.classList.remove('oculto'));
-btnGuardarSalir.addEventListener('click', () => {
-    guardarJuego();
-    modalSalir.classList.add('oculto');
-    volverAlMenu();
-});
-btnNoGuardarSalir.addEventListener('click', () => {
-    limpiarJuegoGuardado();
-    modalSalir.classList.add('oculto');
-    volverAlMenu();
-});
-btnCancelar.addEventListener('click', () => modalSalir.classList.add('oculto'));
+  crearTeclado() {
+    DOM.teclado.innerHTML = '';
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => {
+      const b = document.createElement('button');
+      b.className = 'tecla';
+      b.textContent = l;
+      b.dataset.letra = l;
+      b.addEventListener('click', () => this.verificarLetra(l, b));
+      DOM.teclado.appendChild(b);
+    });
+  },
 
-document.getElementById('btnJugarOtroGanaste').addEventListener('click', iniciarJuego);
-document.getElementById('btnJugarOtroPerdiste').addEventListener('click', iniciarJuego);
-document.getElementById('btnMenuGanaste').addEventListener('click', volverAlMenu);
-document.getElementById('btnMenuPerdiste').addEventListener('click', volverAlMenu);
+  verificarLetra(letra, tecla) {
+    if (gameState.letrasAdivinadas.includes(letra)) return;
 
-function iniciarJuego() {
-    // Limpiar juego guardado anterior
-    limpiarJuegoGuardado();
-    
-    // Resetear variables
-    fallos = 0;
-    letrasAdivinadas = [];
-    
-    // ⭐ Seleccionar palabra aleatoria (ahora es un objeto con id y palabra)
-    const palabrasArray = palabras[dificultadSeleccionada];
-    const palabraObj = palabrasArray[Math.floor(Math.random() * palabrasArray.length)];
-    palabraActual = palabraObj.palabra;
-    palabraActualId = palabraObj.id;
-    
-    // Mostrar pantalla de juego
-    pantallaInicio.classList.add('oculto');
-    pantallaResultado.classList.add('oculto');
-    pantallaJuego.classList.remove('oculto');
-    
-    // Crear espacios para las letras
-    crearEspaciosLetras();
-    
-    // Crear teclado
-    crearTeclado();
-    
-    // Resetear dibujo
-    resetearDibujo();
-    
-    // Actualizar contador
-    actualizarContador();
-}
-
-function crearEspaciosLetras() {
-    letrasPalabra.innerHTML = '';
-    for (let i = 0; i < palabraActual.length; i++) {
-        const espacio = document.createElement('div');
-        espacio.className = 'letra-espacio';
-        espacio.dataset.letra = palabraActual[i];
-        letrasPalabra.appendChild(espacio);
-    }
-}
-
-function crearTeclado() {
-    teclado.innerHTML = '';
-    const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
-    for (let letra of letras) {
-        const tecla = document.createElement('button');
-        tecla.className = 'tecla';
-        tecla.textContent = letra;
-        tecla.dataset.letra = letra;
-        tecla.addEventListener('click', () => verificarLetra(letra, tecla));
-        teclado.appendChild(tecla);
-    }
-}
-
-function verificarLetra(letra, tecla) {
-    if (letrasAdivinadas.includes(letra)) return;
-    
-    letrasAdivinadas.push(letra);
+    gameState.letrasAdivinadas.push(letra);
     tecla.classList.add('deshabilitada');
-    
-    if (palabraActual.includes(letra)) {
-        // Letra correcta
-        tecla.classList.add('correcta');
-        mostrarLetrasCorrectas(letra);
-        
-        // Verificar si ganó
-        if (verificarVictoria()) {
-            limpiarJuegoGuardado();
-            setTimeout(() => mostrarResultado(true), 500);
-        } else {
-            // Guardar progreso
-            guardarJuego();
-        }
-    } else {
-        // Letra incorrecta
-        tecla.classList.add('incorrecta');
-        fallos++;
-        actualizarContador();
-        mostrarParteCuerpo(fallos);
-        
-        // Verificar si perdió
-        if (fallos >= maxFallos) {
-            limpiarJuegoGuardado();
-            setTimeout(() => mostrarResultado(false), 500);
-        } else {
-            // Guardar progreso
-            guardarJuego();
-        }
-    }
-}
 
-function mostrarLetrasCorrectas(letra) {
-    const espacios = document.querySelectorAll('.letra-espacio');
-    espacios.forEach(espacio => {
-        if (espacio.dataset.letra === letra) {
-            espacio.textContent = letra;
-        }
+    if (gameState.palabraActual.includes(letra)) {
+      tecla.classList.add('correcta');
+      this.mostrarLetras(letra);
+
+      if (this.verificarVictoria()) {
+        storage.limpiar();
+        setTimeout(() => this.mostrarResultado(true), 500);
+      } else storage.guardar();
+
+    } else {
+      tecla.classList.add('incorrecta');
+      gameState.fallos++;
+      utils.mostrarParteCuerpo(gameState.fallos);
+      utils.actualizarContador();
+
+      if (gameState.fallos >= gameState.maxFallos) {
+        storage.limpiar();
+        setTimeout(() => this.mostrarResultado(false), 500);
+      } else storage.guardar();
+    }
+  },
+
+  mostrarLetras(letra) {
+    document.querySelectorAll('.letra-espacio').forEach(e => {
+      if (e.dataset.letra === letra) e.textContent = letra;
     });
-}
+  },
 
-function verificarVictoria() {
-    const espacios = document.querySelectorAll('.letra-espacio');
-    for (let espacio of espacios) {
-        if (espacio.textContent === '') {
-            return false;
-        }
-    }
-    return true;
-}
+  mostrarProgreso() {
+    gameState.letrasAdivinadas.forEach(l =>
+      gameState.palabraActual.includes(l) && this.mostrarLetras(l)
+    );
+  },
 
-function actualizarContador() {
-    contadorFallos.textContent = fallos;
-}
+  restaurarTeclado() {
+    setTimeout(() => {
+      gameState.letrasAdivinadas.forEach(l => {
+        const t = document.querySelector(`button[data-letra="${l}"]`);
+        if (!t) return;
+        t.classList.add('deshabilitada');
+        t.classList.add(gameState.palabraActual.includes(l) ? 'correcta' : 'incorrecta');
+      });
+    }, 50);
+  },
 
-function resetearDibujo() {
-    const partes = document.querySelectorAll('.parte-cuerpo');
-    partes.forEach(parte => parte.classList.remove('visible'));
-}
+  restaurarDibujo() {
+    utils.resetDibujo();
+    for (let i = 1; i <= gameState.fallos; i++) utils.mostrarParteCuerpo(i);
+  },
 
-function mostrarParteCuerpo(numeroFallo) {
-    const partes = document.querySelectorAll('.parte-cuerpo');
-    if (numeroFallo > 0 && numeroFallo <= partes.length) {
-        partes[numeroFallo - 1].classList.add('visible');
-    }
-}
+  verificarVictoria() {
+    return [...document.querySelectorAll('.letra-espacio')]
+      .every(e => e.textContent !== '');
+  },
 
-function mostrarResultado(gano) {
-    pantallaJuego.classList.add('oculto');
-    pantallaResultado.classList.remove('oculto');
-    
+  // 🔥 mejora total del sistema de resultado
+  mostrarResultado(gano) {
+    DOM.tarjetaGanaste.classList.add('oculto');
+    DOM.tarjetaPerdiste.classList.add('oculto');
+
+    utils.toggleScreen([DOM.pantallaJuego], [DOM.pantallaResultado]);
+
     if (gano) {
-        tarjetaGanaste.classList.remove('oculto');
-        tarjetaPerdiste.classList.add('oculto');
-        document.getElementById('palabraGanaste').textContent = palabraActual;
+      DOM.tarjetaGanaste.classList.remove('oculto');
+      DOM.palabraGanaste.textContent = gameState.palabraActual;
     } else {
-        tarjetaPerdiste.classList.remove('oculto');
-        tarjetaGanaste.classList.add('oculto');
-        document.getElementById('palabraPerdiste').textContent = palabraActual;
+      DOM.tarjetaPerdiste.classList.remove('oculto');
+      DOM.palabraPerdiste.textContent = gameState.palabraActual;
     }
+  },
+
+  volverMenu() {
+    utils.toggleScreen(
+      [DOM.pantallaResultado, DOM.pantallaJuego],
+      [DOM.pantallaInicio]
+    );
+    storage.actualizarUI();
+  }
+};
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function setupEventListeners() {
+  document.querySelectorAll('.btn-dificultad').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.btn-dificultad')
+        .forEach(b => b.classList.remove('activo'));
+      btn.classList.add('activo');
+      gameState.dificultad = btn.dataset.dificultad;
+    });
+  });
+
+  document.getElementById('btnEmpezar').addEventListener('click', () => game.iniciar());
+  document.getElementById('btnContinuar').addEventListener('click', () => game.continuar());
+
+  document.getElementById('btnSalir').addEventListener('click', () =>
+    DOM.modalSalir.classList.remove('oculto')
+  );
+
+  document.getElementById('btnGuardarSalir').addEventListener('click', () => {
+    storage.guardar();
+    DOM.modalSalir.classList.add('oculto');
+    game.volverMenu();
+  });
+
+  document.getElementById('btnNoGuardarSalir').addEventListener('click', () => {
+    storage.limpiar();
+    DOM.modalSalir.classList.add('oculto');
+    game.volverMenu();
+  });
+
+  document.getElementById('btnCancelar').addEventListener('click', () =>
+    DOM.modalSalir.classList.add('oculto')
+  );
+
+  document.getElementById('btnJugarOtroGanaste').addEventListener('click', () => game.iniciar());
+  document.getElementById('btnJugarOtroPerdiste').addEventListener('click', () => game.iniciar());
+  document.getElementById('btnMenuGanaste').addEventListener('click', () => game.volverMenu());
+  document.getElementById('btnMenuPerdiste').addEventListener('click', () => game.volverMenu());
+
+  document.getElementById('year').textContent = new Date().getFullYear();
 }
 
-function volverAlMenu() {
-    pantallaResultado.classList.add('oculto');
-    pantallaJuego.classList.add('oculto');
-    pantallaInicio.classList.remove('oculto');
-    verificarJuegoGuardado();
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+async function init() {
+  await palabrasManager.cargar();
+  setupEventListeners();
 }
 
-// Inicializar el juego
-cargarPalabras();
+init();
