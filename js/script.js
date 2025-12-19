@@ -331,8 +331,6 @@ function setupEventListeners() {
   document.getElementById('btnJugarOtroPerdiste').addEventListener('click', () => game.iniciar());
   document.getElementById('btnMenuGanaste').addEventListener('click', () => game.volverMenu());
   document.getElementById('btnMenuPerdiste').addEventListener('click', () => game.volverMenu());
-
-  document.getElementById('year').textContent = new Date().getFullYear();
 }
 
 // ============================================

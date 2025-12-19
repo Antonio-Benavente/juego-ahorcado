@@ -1,12 +1,5 @@
 # Juego del Ahorcado
-
-Este es un juego clásico del Ahorcado desarrollado en JavaScript, HTML y CSS. El objetivo del juego es adivinar la palabra oculta antes de que se complete el dibujo del ahorcado.
-
-## Demo
-![Demostración](/images/page1.png)
-![Demostración](/images/page2.png)
-![Demostración](/images/page3.png)
-![Demostración](/images/page4.png)
+Juego clásico del ahorcado desarrollado con JavaScript vanilla. Interfaz intuitiva y diseño totalmente responsivo. Adivina palabras letra por letra con sistema de validación de entradas, gestión de estados del juego y feedback visual en tiempo real. Diversión educativa sin frameworks.
 
 ## Tecnologías utilizadas
 - HTML5
